@@ -22,4 +22,4 @@ Modbus TCP controller for automated probe drives.
 | 8 | Move profile|
 | 10 | Homing Mode (2 is most useful) |
 | 14 | Set Encoder Position |
-note that registers are in the 32-bit Big Endian format, thus trying to write with basic integers won't work, nor will trying to write to a 16-bit register.
+### note that registers are in the 32-bit Big Endian format, thus trying to write with basic integers won't work, nor will trying to write to a 16-bit register.
