@@ -23,3 +23,5 @@ Modbus TCP controller for automated probe drives.
 | 10 | Homing Mode (2 is most useful) |
 | 14 | Set Encoder Position |
 ### note that registers are in the 32-bit Big Endian format, thus trying to write with basic integers won't work, nor will trying to write to a 16-bit register.
+
+# Test.py and Probe.py are the current most up to date files, make sure they are in the same directory or add Probe.py to PATH.
