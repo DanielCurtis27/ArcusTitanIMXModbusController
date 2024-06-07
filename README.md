@@ -25,3 +25,5 @@ Modbus TCP controller for automated probe drives.
 ### note that registers are in the 32-bit Big Endian format, thus trying to write with basic integers won't work, nor will trying to write to a 16-bit register.
 
 # Test.py and Probe.py are the current most up to date files, make sure they are in the same directory or add Probe.py to PATH.
+
+# NOW ON PYPI!!! Use "pip install ArcusModbus" to get it (make sure it is 0.0.2, I goofed on 0.0.1 and forgot to include the actual module).
