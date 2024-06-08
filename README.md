@@ -24,6 +24,6 @@ Modbus TCP controller for automated probe drives.
 | 14 | Set Encoder Position |
 ### note that registers are in the 32-bit Big Endian format, thus trying to write with basic integers won't work, nor will trying to write to a 16-bit register.
 
-# Test.py and Probe.py are the current most up to date files, make sure they are in the same directory or add Probe.py to PATH.
+# ArcusModbus.py is the most up to date version of the software, adding support for connecting to and running multiple servos at the same time.
 
-# NOW ON PYPI!!! Use "pip install ArcusModbus" to get it (make sure it is 0.0.2, I goofed on 0.0.1 and forgot to include the actual module).
+# NOW ON PYPI!!! Use "pip install ArcusModbus" to get it. Version 0.0.2 is for single servo use and is known to work, while version 0.0.3 is for single or multi-servo use, however is still experimental and not known if it works.
