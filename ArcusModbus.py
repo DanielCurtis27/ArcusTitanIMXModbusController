@@ -16,7 +16,7 @@ class Probes:
         self.MOVEPERMM = MOVEPERMM
 
         global clist
-        clist.insert(int(self.id) - 1, ModbusClient(host=self.ip, port=5000))
+        clist[int(self.id) - 1] = ModbusClient(host=self.ip, port=5000)
 
 
 #c = ModbusClient(host="x", port=5000) #dummy value for initializing c as a ModbusClient
@@ -96,9 +96,26 @@ def DigInput_wait(probe: Probes, register, bit1, bit2):
         bits = int(decoder.decode_32bit_int())
         #replace this to check the actual bit instead of decimal value, python makes this hard because it hates leading 0's
         #print(bits)
-        if bits == bit1 or bits==bit2: #this corresponds to the motor being on, in position, and homed
+        
+        if bits == bit1 or bits == bit2:
             i = 1
-        time.sleep(.25)
+            time.sleep(.25)
+def InverseDigInput_wait(probe: Probes, register, bit1: list):
+    c = clist[int(probe.id)-1]
+    
+    i = 0
+    while i==0:
+        i = 1
+        Dinputs = c.read_holding_registers(register, 2)
+        decoder = BinaryPayloadDecoder.fromRegisters(Dinputs.registers, byteorder=Endian.BIG, wordorder=Endian.BIG)
+        bits = int(decoder.decode_32bit_int())
+        #replace this to check the actual bit instead of decimal value, python makes this hard because it hates leading 0's
+        #print(bits)
+        for i in bit1:
+            if bits == i:
+                i = 0
+            time.sleep(.25)
+
 
 def Check_registers(probe: Probes, register):
     c = clist[int(probe.id)-1]
@@ -130,7 +147,7 @@ def Move(probe: Probes, distance): #give distance in mm
     c.write_coils(9, [False])
     c.write_coils(9, [True]) #begin movement
     
-    DigInput_wait(probe, 10, 19, 23) #waits until movement is done
+    DigInput_wait(probe, 10, 19, 23)
     builder.reset()
 
 
