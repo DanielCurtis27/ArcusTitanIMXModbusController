@@ -3,6 +3,7 @@ from pymodbus.constants import Endian
 from pymodbus.payload import BinaryPayloadDecoder
 from pymodbus.payload import BinaryPayloadBuilder
 import time
+import math
 
 #used to write to the motors
 builder = BinaryPayloadBuilder(byteorder=Endian.BIG, wordorder=Endian.BIG)
@@ -36,6 +37,7 @@ class Probes:
         self.r = InsertRadius #for the soft limit of the motor, more like an "outsert radius"
         self.MOVEPERMM = MOVEPERMM
         self.client = ModbusClient(host=self.ip, port=5000)
+        self.homed = False
 
     def connect(self):
         self.client.connect()
@@ -72,22 +74,24 @@ class Probes:
         Write_registers(self.client, 14, 0) #sets position to 0
         time.sleep(.5)
         print(f"pos: {Check_registers(self.client, 0)}")
+        self.homed = True
         time.sleep(1)
     def move(self, distance): #give distance in mm
-
+        if self.homed == False:
+            raise Exception("You cannot move the probe before homing it.")
         MovDistance = -1*(distance * float(self.MOVEPERMM))
         SoftLimit = -1*(self.r * self.MOVEPERMM)
-        if MovDistance >= SoftLimit:
-            raise Exception(f"You cannot move more than what this probe allows ({self.r})")
-
-        builder.add_32bit_int(MovDistance)
+        if MovDistance <= SoftLimit:
+            raise Exception(f"You cannot move more than what this probe allows (more than {self.r} mm)")
+    
+        builder.add_32bit_int(int(math.floor(MovDistance)))
         payload = builder.build()
         self.client.write_registers(0, payload, skip_encode=True, unit=0)
-
+    
         self.client.write_coils(9, [False])
         self.client.write_coils(9, [True]) #begin movement
-
-        DigInput_wait(self.client, 10, 19, 23) #waits until movement is done
+    
+        DigInput_wait(self.client, 10, 19, 23)
         builder.reset()
 
     def disconnect(self):
@@ -95,4 +99,5 @@ class Probes:
         self.client.write_coils(8, [True]) #turn off motor
 
         self.client.close() #close the connection
+
     
